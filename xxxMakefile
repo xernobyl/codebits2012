@@ -1,0 +1,22 @@
+CC = g++
+OBJS = main.o GLWindow.o Quad.o Shaders.o Resources.o Camera.o FlatCamera.o Particles.o Text.o Font.o stb_image.o Model.o Background.o BGCircles.o BGPlanes.o BGTunnel.o Slide.o TextSlide.o
+CPP_FILES = main.cpp GLWindow.cpp Quad.cpp Shaders.cpp Resources.cpp Camera.cpp FlatCamera.cpp Particles.cpp Text.cpp Font.cpp stb_image.cpp Model.cpp Background.cpp BGCircles.cpp BGPlanes.cpp BGTunnel.cpp Slide.cpp TextSlide.cpp
+H_FILES = GLWindow.h Quad.h Shaders.h Resources.h Camera.h FlatCamera.h Particles.h Text.h Font.h stb_image.h Model.h Background.h BGCircles.h BGPlanes.h BGTunnel.h Slide.h TextSlide.h
+OUT_EXE = codebits
+
+CFLAGS += -O3 -Wall -ftree-vectorize -fPIC -std=c++03 -mfp16-format=ieee -U_FORTIFY_SOURCE
+CFLAGS += -DSTANDALONE -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DTARGET_POSIX -D_LINUX -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_LIBOPENMAX=2 -DOMX -DOMX_SKIP64BIT -DUSE_EXTERNAL_OMX -DHAVE_LIBBCM_HOST -DUSE_EXTERNAL_LIBBCM_HOST -DUSE_VCHIQ_ARM
+
+LDFLAGS += -L/opt/vc/lib -lGLESv2
+INCLUDES += -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads
+
+%.o: %.cpp $(DEPS)
+	$(CC) $(INCLUDES) -c -o $@ $< $(CFLAGS)
+
+release: $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(CFLAGS)
+
+.PHONY: clean
+
+clean:
+	rm -f *.o

@@ -1,0 +1,353 @@
+PRE-INTRO - Codebits 2012 - OpenGL ES 2.0 Programming on a Raspberry Pi!!!111!!one!!1!eleven!1!
+
+- welcome
+- name
+- work top secret
+- did a talk 2 years ago
+- mention open sourceness of the thing
+- on my free time I play bass
+- draw
+- ...write code...
+- 2-manifold will be the most complicated math thing I'll say
+- also, sorry that the small text is hard to read
+
+INTRO
+
+- always seen a screen as some kind of portal to fly away from reality (he dies in the end)
+- games, movies...
+- since I've learned how to program
+- spend a big part of my free time developing and researching graphics
+- the idea of making a world apear on a screen much more appealing than a world on an hard drive
+- software rendered a wireframe cube in pascal
+- tried some stuff in good old mode 13h
+- over ambitious stuff
+- even the cube
+- bought a book 7 or 8 years ago
+- didn't read it
+- too academic
+- read tutorials
+- read more tutorials
+- looked at lot's of code
+- did a cube
+- on windows
+- using opengl
+- using directx
+- back to opengl
+- moved to linux
+- back to windows
+- rarely copied code (rare exception to FXAA...?)
+- never used an engine
+- eventually it all comes together and you reach some kind enlightenment
+- everything clicks, cubes are no longer cubes
+- built a deferred renderer
+- replaced it with a light pre pass renderer
+- implemented some 10 different ambient occlusion techniques
+- tried global illumination with VPLs
+- phisically based rendering, more recently
+- computers have lot's of power
+- my "framework" has LOT's of passes (count passes, count pixels)
+- written a multithreading library in C++
+- BUT computers have different specs
+- so I did some graphics coding for android
+- implemented ambient occlusion in very few assembly instructions, fast on my €100 phone
+- BUT android has the same problems... and a small screen... and it's java (at the time).
+- a very small wall, and certainly not a train
+- switched to WebGL (decent wall)
+- did some stuff in WebGL
+- didn't like it
+- slow!
+- my laptop can run crysis 2 with a steady framerate, but can't run a simple WebGL game
+- javascript is a mess
+- excelent for what it was made to do
+- "appealing to nonprofessional programmers, like Microsoft's Visual Basic"
+- horrible mess otherwise
+- not trivial to see what the processor does, when some things get executed
+- I could go on
+- I like control, and I didn't feel in control with it
+- people reply too much on libraries and wrappers
+
+libgml
+libraspberrypi
+
+RASPBERRY PI
+
+- a fixed platform
+- cheap!
+- powerful
+- but not too powerful
+- low level, but not too much
+- it has the good parts of linux
+- and you can skip the bad parts of linux!
+- can easily create an opengl context from the console
+- skipping xorg, bunch of other horrible heavy stuff running on the background
+- now you can even skip linux and run everything from 0, minus firmware blob
+- runs opengl es 2.0
+
+OPENGL ES 2.0 - Imagination is more important than knowledge. You have internet.
+
+- opengl for embedded systems
+- opengl 2.0, march 2007
+- everytime you use opengl es <2.0 a kitten dies
+- cleanup of real opengl
+- opengl is a state machine
+- >121 functions
+- Buffer Objects (7), Viewport and Clipping (2), Reading pixels (1), Vertices (7),
+	Texturing (15), Rasterization (5), Pixel Rectangles (1), Shaders and Programs (21),
+	Shader Queries (14), Per-Fragment Operations (18), Special Functions (3), State and State Requests (5),
+	Whole Framebuffer Operations (8), Framebuffer Objects (14)
+- and a few extensions
+- most of them are asynchronous
+- opengl context comprised of a framebuffer which itself is comprised of:
+- color buffer (the so called framebuffer, might be mandatory)
+- depth buffer
+- stencil buffer
+- our eyes are sensible to 3 main colors (some more than others)
+- our brains perceive a fast sequence of images as motion
+- and that's what we'll do
+
+do
+{
+	DrawFrame();
+	eglSwapBuffers(display, surface);
+} while(looping);
+
+END OF PART ONE
+
+- end of part one
+- questions? I guess not
+
+BLACK SCREEN
+
+- however we'll start with a black screen
+- not very exciting
+
+glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+glClear(GL_COLOR_BUFFER_BIT);
+
+GET ON WITH IT
+
+- only 2 functions draw stuff (triangles lines or points!)
+- void DrawArrays(enum mode, int first, sizei count);	// use for points
+- void DrawElements(enum mode, sizei count, enum type, void *indices);	// use for triangles
+- mode can be POINTS, TRIANGLES, LINES, LINE_STRIP, LINE_LOOP, TRIANGLE_STRIP, TRIANGLE_FAN
+- however don't bother with anything other than triangles points or lines
+
+WHAT EXACTLY ARE WE DRAWING
+
+- vertices
+- are formed from attributes
+- you usually need a position, right?
+
+glVertexAttribPointer(number, size, type, normalize, stride, offset);
+glEnableVertexAttribArray(number);
+
+- you should use that before you drawing
+- back to the vertices: they come in buffers
+- and they can be static or dynamic
+
+glGenBuffers(1, &vbo);
+glBindBuffer(GL_ARRAY_BUFFER, vbo);
+glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+
+STREAM: The data store contents will be modified once and used at most a few times
+STATIC: The data store contents will be modified once and used many times
+DYNAMIC: The data store contents will be modified repeatedly and used many times
+
+- this covers DrawArrays...
+
+- on the most basic 2-manifold (aka closed surface), a tetrahedron, each vertex is shared by 3 faces
+- even on a quadrangle we're processing 6 vertices instead of 4
+- that means we can process 2/3 of the vertices
+- we can index so that each vertex is only processed once, with an infinite cache
+- sequence of indices
+
+glGenBuffers(1, &ibo);
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+
+- same thing if you still remember
+- there's also an extension
+
+void * glMapBuffer(GLenum target, GLenum access);
+GLboolean glUnmapBuffer(GLenum target);
+
+- allow a more direct access to a buffer, useful for dynamic stuff
+- may be faster than another copy
+- speaking of copies
+
+glEnable(GL_DEPTH_TEST);
+glEnable(GL_CULL_FACE);
+
+- don't forget to disable
+
+glDisable(GL_DEPTH_TEST);
+glDisable(GL_CULL_FACE);
+
+SHADERS
+
+- speaking of cool, your face won't be cool until it's shaded
+- essentially a set of 2 callbacks
+- one for vertices
+- another one for fragments (pixels, texels)
+
+shader = glCreateShader(type);	// GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
+glShaderSource(shader, 1, shaderfile, shaderfilelen);
+glCompileShader(shader);
+
+- javascript people might not know what compile does...
+- do that a few times, at least once per type
+
+program = glCreateProgram();
+glAttachShader(program, shader[i]);	// A FEW TIMES
+glBindAttribLocation(program, attrib_number, "ATTRIB_NAME");	// for each attribute (remember those?)
+glLinkProgram(program);
+
+- ...now we should have a look inside a shader
+
+VERTEX SHADER
+
+attribute vec4 A0;	// defaults to vec4(0.0, 0.0, 0.0, 1.0)
+uniform mat4 a_matrix;
+varying float Im_not_doing_anything;
+
+void main()
+{
+	// javascript people: that's the correct way to use parentheses
+	gl_Position = a_matrix * A0;
+	Im_not_doing_anything = 1337.0;
+}
+
+FRAGMENT SHADER
+
+precision lowp float;
+varying float Im_not_doing_anything;
+
+void main()
+{
+	gl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);	// BENFICA!!! (MAN U!!! for the britts)
+}
+
+- I don't like football
+- But I like textures
+
+void UseProgram(uint program);
+
+int GetUniformLocation(uint program, const char *name);
+
+void Uniform{1234}{if}(int location, T value);
+void Uniform{1234}{if}v(int location, sizei count, T value);
+void UniformMatrix{234}fv(int location, sizei count, boolean transpose, const float *value);
+
+- by now you have everything you need to draw stuff on screen
+- minus the math, useful for lighting
+- but you can just copy paste
+
+END OF PART TWO
+
+- this concludes the second part
+- any questions so far?
+
+BLENDING
+
+- you can merge the previous color buffer with the new one
+- in lots of ways
+
+glEnable(GL_BLEND);
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+TEXTURES
+
+- opengl es only supports 2 kind of textures
+- cubemaps, I won't talk about them
+- and 2d textures
+
+glGenTextures(1, &texture);
+glBindTexture(GL_TEXTURE_2D, texture);
+
+- after that you have 2 choices
+
+void TexImage2D(enum target, int level, int internalformat, sizei width, sizei height, int border, enum format, enum type, void *data);
+void CompressedTexImage2D(enum target, int level, enum internalformat, sizei width, sizei height, int border, sizei imageSize, void *data);
+
+- and then a bunch of other choices!
+
+void TexParameter{if}(enum target, enum pname, T param);
+
+- it usually looks like
+
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+- and to use them
+
+glActiveTexture(GL_TEXTURE0 + look_at_me);
+glBindTexture(GL_TEXTURE_2D, texture);
+glUniformi(location, look_at_me)
+
+- then draw
+
+FRAMEBUFFER OBJECTS
+
+- by now only one major feature is missing
+- those are framebuffer objects
+- they're pretty much like an opengl context
+- can have color depth and stencil buffers
+- the color buffer can be (is) a texture
+- sadly the others cannot
+- it goes like this
+
+glGenRenderbuffers(1, &depthrenderbuffer);
+glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
+glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);	// DEPTH_COMPONENT24_OES or 32
+
+glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebuffertexture, 0);
+
+- and to use it
+
+glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);	// 0 for main
+glViewport(0, 0, width, height);
+
+- with that you can do post processing effects on your rendered scene
+- or perhaps effects at lower resolutions
+- that's all you need to make a demo... I mean building a complete pong game on a shader
+- other than this
+
+SOME HINTS
+
+- don't do anything unless you need to (check for default values)
+- always use the smallest possible formats
+- 8 bits are better than 16
+- 16 are better than 32
+- the raspberry pi supports 16bits floats (use them!)
+- avoid overdraw (remember depth test, and backface culling)
+- avoid switching states, specially textures
+- you can store a bunch of models on the same buffers
+- max 65536 vertices
+
+OUTRO - Graphics programming is like making love to a beautiful woman. you never know how good it looks until you see it on a screen!
+
+- I hope this didn't end up too similar to previous talk
+- I don't want to sound like ps preaching about the demoscene
+- sadly I had a busy week and I couldn't build proper examples
+- hope this presentation and it's source code can be helpful for some of you
+
+OpenGL ES 2.0 Quick Reference
+opengl.org/wiki
+khronos.org/opengles/sdk/docs/man
+
+code.google.com/p/opengles-book-samples
+
+assimp.sourceforge.net
+aras-p.info/blog/2010/09/29/glsl-optimizer
+
+raspberrypi.org
+
+- thank
+- questions?
+
+BONUS
+
+- explain point sprites
+- explain font rendering
