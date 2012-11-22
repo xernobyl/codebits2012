@@ -19,4 +19,5 @@ private:
 	Text *text;
 	mat4 m;
 	bool bg;
+	float col[4];
 };

@@ -7,6 +7,10 @@ TextSlide::TextSlide(Font *font, const char *str, const unsigned &strlen, const 
 {
 	this->bg = bg;
 	text = new Text(font, str, strlen, size);
+	col[0] = (float)rand() / RAND_MAX;
+	col[1] = (float)rand() / RAND_MAX;
+	col[2] = (float)rand() / RAND_MAX;
+	col[3] = 0.5f;//(float)rand() / RAND_MAX;
 }
 
 
@@ -33,7 +37,7 @@ void TextSlide::DrawSlide()
 	if(bg)
 	{
 		Shader::Solid::Use();
-		Shader::Solid::c((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX, 0.0);
+		Shader::Solid::c(col);
 		Shader::Solid::m((float*)&m);
 		
 		text->DrawBox();
@@ -41,7 +45,10 @@ void TextSlide::DrawSlide()
 
 	Shader::Text::Use();
 	Shader::Text::S(0);
-	Shader::Text::c(1.0f, 1.0f, 1.0f, 1.0f);
+	if(bg)
+		Shader::Text::c(1.0f - col[0], 1.0f - col[0], 1.0f - col[0], 1.0f);
+	else
+		Shader::Text::c(1.0f, 1.0f, 1.0f, 1.0f);
 	Shader::Text::m((float*)&m);
 
 	text->Draw();

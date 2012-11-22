@@ -11,7 +11,7 @@ INCLUDES+=-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads
 all: $(BIN) $(LIB)
 
 %.o: %.cpp
-	@rm -f $@ 
+	#@rm -f $@ 
 	g++ $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 %.bin: $(OBJS)

@@ -12,10 +12,10 @@
 using namespace glm;
 
 
-extern PFNGLDISCARDFRAMEBUFFEREXTPROC glDiscardFramebufferEXT;
-extern PFNGLGETBUFFERPOINTERVOESPROC	glGetBufferPointervOES;
-extern PFNGLMAPBUFFEROESPROC	glMapBufferOES;
-extern PFNGLUNMAPBUFFEROESPROC	glUnmapBufferOES;
+//extern PFNGLDISCARDFRAMEBUFFEREXTPROC glDiscardFramebufferEXT;
+//extern PFNGLGETBUFFERPOINTERVOESPROC	glGetBufferPointervOES;
+//extern PFNGLMAPBUFFEROESPROC	glMapBufferOES;
+//extern PFNGLUNMAPBUFFEROESPROC	glUnmapBufferOES;
 
 
 class GLWindow

@@ -32,10 +32,10 @@ uint_fast64_t GLWindow::time_ns;
 uint_fast32_t GLWindow::dtime_ns;
 
 
-PFNGLDISCARDFRAMEBUFFEREXTPROC	glDiscardFramebufferEXT;
-PFNGLGETBUFFERPOINTERVOESPROC	glGetBufferPointervOES;
-PFNGLMAPBUFFEROESPROC	glMapBufferOES;
-PFNGLUNMAPBUFFEROESPROC	glUnmapBufferOES;
+//PFNGLDISCARDFRAMEBUFFEREXTPROC	glDiscardFramebufferEXT;
+//PFNGLGETBUFFERPOINTERVOESPROC	glGetBufferPointervOES;
+//PFNGLMAPBUFFEROESPROC	glMapBufferOES;
+//PFNGLUNMAPBUFFEROESPROC	glUnmapBufferOES;
 
 
 uint32_t GLWindow::ScreenWidth()
@@ -111,8 +111,14 @@ bool GLWindow::InitGL()
 	context = eglCreateContext(display, config, EGL_NO_CONTEXT, context_attributes);
 	ASSERT(context != EGL_NO_CONTEXT, "Could not create context.");
 
-	int32_t success = graphics_get_display_size(0, &screen_width, &screen_height);	// 0 = HDMI
+	DISPMANX_MODEINFO_T mode_info;
+	
+	DISPMANX_DISPLAY_HANDLE_T dispman_display = vc_dispmanx_display_open(0);	// 0 = LCD
+	int success = vc_dispmanx_display_get_info(dispman_display, &mode_info);
 	ASSERT(success >= 0, "Could not get the display size.");
+
+	screen_width = mode_info.width;
+	screen_height = mode_info.height;
 
 	VC_RECT_T dst_rect;
 	dst_rect.x = 0;
@@ -133,7 +139,6 @@ bool GLWindow::InitGL()
 		0
 	};
 
-	DISPMANX_DISPLAY_HANDLE_T dispman_display = vc_dispmanx_display_open(0);	// 0 = LCD
 	DISPMANX_UPDATE_HANDLE_T dispman_update = vc_dispmanx_update_start(0);
 	DISPMANX_ELEMENT_HANDLE_T dispman_element = vc_dispmanx_element_add(dispman_update, dispman_display, 0, &dst_rect, 0, &src_rect, DISPMANX_PROTECTION_NONE, &alpha, (DISPMANX_CLAMP_T *)NULL, (DISPMANX_TRANSFORM_T)0);
 
@@ -150,10 +155,10 @@ bool GLWindow::InitGL()
 
 	//std::cout << glGetString(GL_EXTENSIONS) << std::endl;
 
-	_INITEXT_(PFNGLDISCARDFRAMEBUFFEREXTPROC, glDiscardFramebufferEXT);
-	_INITEXT_(PFNGLGETBUFFERPOINTERVOESPROC, glGetBufferPointervOES);
-	_INITEXT_(PFNGLMAPBUFFEROESPROC, glMapBufferOES);
-	_INITEXT_(PFNGLUNMAPBUFFEROESPROC, glUnmapBufferOES);
+	//_INITEXT_(PFNGLDISCARDFRAMEBUFFEREXTPROC, glDiscardFramebufferEXT);
+	//_INITEXT_(PFNGLGETBUFFERPOINTERVOESPROC, glGetBufferPointervOES);
+	//_INITEXT_(PFNGLMAPBUFFEROESPROC, glMapBufferOES);
+	//_INITEXT_(PFNGLUNMAPBUFFEROESPROC, glUnmapBufferOES);
 
 	InitInput();
 

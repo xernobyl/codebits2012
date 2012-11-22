@@ -33,6 +33,18 @@ void Render()
 	if(GLWindow::KeyPressed(BTN_MIDDLE) || GLWindow::KeyPressed(KEY_ESC))
 		GLWindow::BreakLoop();
 
+	if(GLWindow::KeyPressed(BTN_GEAR_UP))
+	{
+		flatcamera.Zoom(0.1f);
+		flatcamera.UpdateProjection();
+	}
+	
+	if(GLWindow::KeyPressed(BTN_GEAR_DOWN))
+	{
+		flatcamera.Zoom(-0.1f);
+		flatcamera.UpdateProjection();
+	}
+	
 	if(GLWindow::KeyPressed(BTN_LEFT))
 		Slide::Next();
 	
@@ -59,18 +71,18 @@ void Render()
 	Background::Update(GLWindow::TimeNS());
 	Slide::Update(GLWindow::TimeNS(), &flatcamera);
 
-	/*GLenum attachments[] =
+	GLenum attachments[] =
 	{
 		GL_COLOR_EXT,
 		//GL_DEPTH_EXT,
 		//GL_STENCIL_EXT
-	};*/
+	};
 
 	Background::Render();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, GLWindow::ScreenWidth(), GLWindow::ScreenHeight());
-	//glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, attachments);
+	glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, attachments);
 
 	Background::Draw();
 	Slide::Draw();
@@ -145,7 +157,7 @@ int main(int argc, char *argv[])
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "  ...and WebGL.  ", 17, 0.1f));	// BUG
 		//Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "\"appealing to nonprofessional programmers, like Microsoft's Visual Basic\"", 7, 0.05f));	// BUG
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "I like control.", 15, 0.125f, true));
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "libgml\nlibraspberrypi", 21, 0.01f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "libgml\nlibraspberrypi", 21, 0.1f));
 
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "Raspberry Pi", 12, 0.15f, true));
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "700Mhz CPU\n250Mhz GPU\n256MB RAM", 31, 0.1f));
@@ -188,31 +200,31 @@ int main(int argc, char *argv[])
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "...lets get moving", 18, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "{\n"
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "do\n{\n"
 			"\tDrawFrame();\n"
 			"\teglSwapBuffers(display, surface);\n"
-			"\t} while(looping);", 69, 0.05f));
+			"} while(looping);", 72, 0.05f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "end of part I", 13, 0.1f));
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "questions so far?", 17, 0.1f));
 
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "A black screen\nis usually easy.", 31, 0.15f, true));
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glClearColor(0.0f, 0.0f, 0.0f, 0.0f);\nglClear(GL_COLOR_BUFFER_BIT);", 67, 0.1f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glClearColor(0.0f, 0.0f, 0.0f, 0.0f);\nglClear(GL_COLOR_BUFFER_BIT);", 67, 0.05f));
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "OK. What's next?", 16, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "void DrawArrays(enum mode, int first, sizei count);\nvoid DrawElements(enum mode, sizei count, enum type, void *indices);", 120, 0.075f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glDrawArrays(mode, first, count);\nglDrawElements(mode, count, type, *indices);", 78, 0.05f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "POINTS, TRIANGLES, LINES, LINE_STRIP, LINE_LOOP", 47, 0.075f));
+		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "POINTS, TRIANGLES, LINES\nLINE_STRIP, LINE_LOOP", 46, 0.075f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], " vertices ", 10, 0.2f, true));	// BUG
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], " attributes ", 12, 0.1f));		// BUG
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "you need to know where you are", 30, 0.1f));
 
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glVertexAttribPointer(number, size, type, normalize, stride, offset);\nglEnableVertexAttribArray(number);", 104, 0.075f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glVertexAttribPointer(n, size, type, normalize, stride, offset);\nglEnableVertexAttribArray(number);", 104, 0.04f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "vertex buffer objects", 21, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glGenBuffers(1, &vbo);\nglBindBuffer(GL_ARRAY_BUFFER, vbo);\nglBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);", 117, 0.075f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glGenBuffers(1, &vbo);\nglBindBuffer(GL_ARRAY_BUFFER, vbo);\nglBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);", 117, 0.04f));
 
 		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "STREAM\nSTATIC\nDYNAMIC", 21, 0.1f));
 		
@@ -222,17 +234,17 @@ int main(int argc, char *argv[])
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "the solution is to index", 24, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glGenBuffers(1, &ibo);\nglBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);\nglBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);", 133, 0.075f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glGenBuffers(1, &ibo);\nglBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);\nglBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);", 133, 0.04f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "like the previous... but with ELEMENT", 37, 0.1f));
+		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "like the previous...\nbut with ELEMENT", 37, 0.1f));
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "And speaking of EXTENSIONS...", 29, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "void * glMapBuffer(GLenum target, GLenum access);\nGLboolean glUnmapBuffer(GLenum target);", 89, 0.1f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "void * glMapBuffer(GLenum target, GLenum access);\nGLboolean glUnmapBuffer(GLenum target);", 89, 0.05f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "And since I've mentiond 2-manifolds...", 38, 0.1f));
+		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "and since I've we're on 3d space", 32, 0.1f));
 		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glEnable(GL_DEPTH_TEST);\nglEnable(GL_CULL_FACE);", 48, 0.1f));
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glClear(GL_DEPTH_BUFFER_BIT);", 48, 0.1f));
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glDisable(GL_DEPTH_TEST);\nglDisable(GL_CULL_FACE);", 50, 0.1f));
+		//Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glClear(GL_DEPTH_BUFFER_BIT);", 29, 0.1f));
+		//Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glDisable(GL_DEPTH_TEST);\nglDisable(GL_CULL_FACE);", 50, 0.1f));
 
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], " Shaders!!1!!11!! ", 18, 0.2f, true));	// BUG
 		
@@ -241,60 +253,60 @@ int main(int argc, char *argv[])
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "one for vertices", 16, 0.1f));
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "another for fragments", 21, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "shader = glCreateShader(GL_VERTEX_SHADER);	// or GL_FRAGMENT_SHADER\nglShaderSource(shader, 1, shaderfile, shaderfilelen);\nglCompileShader(shader);", 146, 0.1f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "shader = glCreateShader(GL_VERTEX_SHADER);	// FRAGMENT\nglShaderSource(shader, 1, shaderfile, shaderfilelen);\nglCompileShader(shader);", 146, 0.05f));
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "do it a few times", 17, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "program = glCreateProgram();\nglAttachShader(program, shader[i]);\nglBindAttribLocation(program, attrib_number, \"ATTRIB_NAME\");\nglLinkProgram(program);", 149, 0.075f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "program = glCreateProgram();\nglAttachShader(program, shader[i]);\nglBindAttribLocation(program, attrib_number, \"NAME\");\nglLinkProgram(program);", 149, 0.05f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "...and what exactly is a shader?", 32, 0.1f));
 		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "   GLSL   ", 10, 0.1f));	// BUG
 
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "...a vertex shader...", 21, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "attribute vec4 A0;	// defaults to vec4(0.0, 0.0, 0.0, 1.0)\nuniform mat4 a_matrix;\nvarying float Im_not_doing_anything;\n\nvoid main()\n{\n\t// javascript people: that's the correct way to use parentheses\n\tgl_Position = a_matrix * A0;\n\tIm_not_doing_anything = 1337.0;\n}", 225, 0.05f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "attribute vec4 A0;	// defaults to vec4(.0, .0, .0, 1.0)\nuniform mat4 a_matrix;\nvarying float Im_not_doing_anything;\n\nvoid main()\n{\n\t// js guys: that's the correct way to use parentheses\n\tgl_Position = a_matrix * A0;\n\tIm_not_doing_anything = 1337.0;\n}", 252, 0.05f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "...and a fragment shader...", 27, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "precision lowp float;\nvarying float Im_not_doing_anything;\n\nvoid main()\n{\n\tgl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);	// BENFICA!!! (MAN U!!! for the britts)\n}", 157, 0.05f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "precision lowp float;\nvarying float Im_not_doing_anything;\n\nvoid main()\n{\n\tgl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);\n}", 117, 0.05f));
 
-		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "You need all that to show something on screen.", 27, 0.1f));
+		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "You need all that to\nshow something on screen.", 46, 0.1f));
 		
 		// RED CUBE
 		
-		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "But there's not much more to know.", 27, 0.1f));
+		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "but there's not much more to know", 33, 0.1f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "this concludes the 2nd part", 27, 0.1f));
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "...any questions so far?", 24, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glEnable(GL_BLEND);\nglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);", 70, 0.075f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glEnable(GL_BLEND);\nglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);", 70, 0.05f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "  textures  ", 12, 0.2f, true));	// BUG
 		
-		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "OGLES2 supports 2 kinds of textures", 35, 0.1f));
+		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "OGLES2 supports 2 kinds", 23, 0.1f));
 		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glGenTextures(1, &texture);\nglBindTexture(GL_TEXTURE_2D, texture);", 66, 0.075f));
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "void TexImage2D(enum target, int level, int internalformat, sizei width, sizei height, int border, enum format, enum type, void *data);\nor\nvoid CompressedTexImage2D(enum target, int level, enum internalformat, sizei width, sizei height, int border, sizei imageSize, void *data);", 278, 0.06f));
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);\nglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);", 146, 0.075f));
-		
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "void TexImage2D(target, level, internalformat, w, h, border, format, type, data);\nor\nvoid CompressedTexImage2D(target, level, internalformat, w, h, border, imageSize, data);", 260, 0.05f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);\nglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);", 145, 0.04f));
+
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "and to use them", 15, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glActiveTexture(GL_TEXTURE0 + look_at_me);\nglBindTexture(GL_TEXTURE_2D, texture);\nglUniformi(location, look_at_me)", 116, 0.075f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glActiveTexture(GL_TEXTURE0 + look_at_me);\nglBindTexture(GL_TEXTURE_2D, texture);\nglUniformi(location, look_at_me)", 114, 0.05f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "draw stuff with textures", 24, 0.1f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "only one major feature is missing", 33, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "framebuffer objects", 24, 0.2f, true));
+		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "framebuffer\nobjects", 19, 0.2f, true));
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "color depth stencil", 19, 0.1f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glGenRenderbuffers(1, &depthrenderbuffer);\nglBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);\nglRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);	// DEPTH_COMPONENT24_OES or 32\n\nglBindFramebuffer(GL_FRAMEBUFFER, framebuffer);\nglFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);\nglFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebuffertexture, 0);", 455, 0.05f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glGenRenderbuffers(1, &depthrenderbuffer);\nglBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);\nglRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);	// DEPTH_COMPONENT24_OES or 32\n\nglBindFramebuffer(GL_FRAMEBUFFER, framebuffer);\nglFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,\ndepthrenderbuffer);\nglFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,\nframebuffertexture, 0);", 455, 0.04f));
 		
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);	// 0 for main\nglViewport(0, 0, width, height);", 94, 0.05f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);\n// framebuffer 0 is the main one\nglViewport(0, 0, width, height);", 113, 0.05f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "And that's it!", 14, 0.1f));
-		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "A few performance notes...", 14, 0.1f, true));
-		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "use the smallest possible formats\navoid overdraw\nstate changes\nreuse\n...", 71, 0.1f));
+		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "A few performance notes...", 26, 0.1f, true));
+		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "use the smallest possible formats\navoid overdraw\nstate changes\nreuse\n...", 72, 0.1f));
 
-		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "OpenGL ES 2.0 Quick Reference\nopengl.org/wiki\nkhronos.org/opengles/sdk/docs/man\n\ncode.google.com/p/opengles-book-samples\n\nassimp.sourceforge.net\naras-p.info/blog/2010/09/29/glsl-optimizer\n\nraspberrypi.org", 213, 0.05f));
+		Slide::Add(new TextSlide(&Resources::font[F_ANONYMOUSPRO], "OpenGL ES 2.0 Quick Reference\nopengl.org/wiki\nkhronos.org/opengles/sdk/docs/man\n\ncode.google.com/p/opengles-book-samples\n\nassimp.sourceforge.net\naras-p.info/blog/2010/09/29/glsl-optimizer\n\nraspberrypi.org", 204, 0.05f));
 		
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], "Thank you.", 10, 0.15f));
 		Slide::Add(new TextSlide(&Resources::font[F_FUTURA], " Questions? ", 12, 0.10f));
